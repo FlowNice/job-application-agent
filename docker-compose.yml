@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # Main Job Application Agent
+  agent:
+    build: .
+    container_name: job-application-agent
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://agent_user:agent_password@postgres:5432/job_agent
+      - FLOWISE_API_URL=http://flowise:3000/api
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config.yaml:/app/config.yaml
+    depends_on:
+      - postgres
+      - flowise
+    networks:
+      - agent-network
+    ports:
+      - "8000:8000"
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: job-agent-db
+    environment:
+      - POSTGRES_USER=agent_user
+      - POSTGRES_PASSWORD=agent_password
+      - POSTGRES_DB=job_agent
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - agent-network
+    ports:
+      - "5432:5432"
+
+  # Flowise (LLM Orchestration)
+  flowise:
+    image: flowiseai/flowise:latest
+    container_name: flowise
+    environment:
+      - DATABASE_PATH=/data
+      - FLOWISE_USERNAME=${FLOWISE_USERNAME:-admin}
+      - FLOWISE_PASSWORD=${FLOWISE_PASSWORD:-password}
+    volumes:
+      - flowise_data:/data
+    networks:
+      - agent-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: job-agent-cache
+    networks:
+      - agent-network
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+  flowise_data:
+
+networks:
+  agent-network:
+    driver: bridge
+

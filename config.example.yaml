@@ -1,0 +1,119 @@
+# Job Application Agent Configuration
+
+# Parsing Configuration
+parsing:
+  # Interval in minutes between scanning for new vacancies
+  scan_interval: 5
+  
+  # Platforms to monitor
+  platforms:
+    djinni:
+      enabled: true
+      base_url: "https://djinni.co"
+      keywords:
+        - "Python"
+        - "Django"
+        - "FastAPI"
+      locations:
+        - "Remote"
+        - "Kyiv"
+    
+    linkedin:
+      enabled: true
+      base_url: "https://www.linkedin.com"
+      keywords:
+        - "Software Engineer"
+        - "Backend Developer"
+      locations:
+        - "Remote"
+
+# Analysis Configuration
+analysis:
+  # Enable NLP-based analysis
+  nlp_enabled: true
+  
+  # Minimum confidence score for extracted information
+  min_confidence: 0.7
+
+# Flowise Configuration
+flowise:
+  enabled: true
+  api_url: "http://localhost:3000/api"
+  api_key: "${FLOWISE_API_KEY}"
+  
+  # Flowise chatflow IDs for different tasks
+  chatflows:
+    vacancy_analysis: "chatflow_id_1"
+    response_generation: "chatflow_id_2"
+
+# Recruiter Interaction Configuration
+recruiter_interaction:
+  # Maxim's contact information
+  maxim_contact:
+    name: "Maxim"
+    email: "maxim@example.com"
+    phone: "+1234567890"
+    slack_id: "U123456789"
+  
+  # Technical specialist contact (optional)
+  specialist_contact:
+    name: "Technical Specialist"
+    email: "specialist@example.com"
+    phone: "+1234567890"
+  
+  # Meeting scheduling
+  calendly:
+    enabled: true
+    url: "https://calendly.com/your-username"
+  
+  crea:
+    enabled: false
+    url: "https://crea.app/your-meeting-link"
+
+# Notification Configuration
+notifications:
+  # Email notifications
+  email:
+    enabled: true
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    sender_email: "${SENDER_EMAIL}"
+    sender_password: "${SENDER_PASSWORD}"
+  
+  # Slack notifications
+  slack:
+    enabled: true
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+  
+  # SMS notifications
+  sms:
+    enabled: false
+    provider: "twilio"
+    account_sid: "${TWILIO_ACCOUNT_SID}"
+    auth_token: "${TWILIO_AUTH_TOKEN}"
+
+# Database Configuration
+database:
+  type: "sqlite"  # sqlite, postgresql
+  path: "./data/agent.db"  # For SQLite
+  # For PostgreSQL:
+  # host: "localhost"
+  # port: 5432
+  # name: "job_agent"
+  # user: "agent_user"
+  # password: "${DB_PASSWORD}"
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: "./logs/agent.log"
+  max_size_mb: 10
+  backup_count: 5
+
+# API Configuration (for future web interface)
+api:
+  enabled: true
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+
