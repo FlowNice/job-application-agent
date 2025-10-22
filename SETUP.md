@@ -86,8 +86,9 @@ This will:
 Once Flowise is running (it might take a few minutes to initialize), you can access its UI at `http://localhost:3000`.
 
 *   **Default Credentials**: `username: admin`, `password: password` (or as set in your `.env` file).
-*   **Create Chatflows**: Inside Flowise, you will need to create chatflows for `vacancy_analysis` and `response_generation` as per the `config.example.yaml`.
-    *   After creating a chatflow, you can find its **Chatflow ID** in the Flowise UI. This ID needs to be updated in your `config.yaml` or `.env` file.
+    *   **Создание чатфлоу (Create Chatflows)**: Внутри Flowise вам потребуется создать чатфлоу для `vacancy_analysis` (анализ вакансий) и `response_generation` (генерация ответов), как указано в `config.yaml`.
+        *   После создания чатфлоу, вы найдете его **Chatflow ID** в пользовательском интерфейсе Flowise. Этот ID необходимо будет обновить в вашем файле `config.yaml` или `.env`.
+        *   **Важно**: Убедитесь, что ваш чатфлоу принимает JSON-объект в качестве `question` (вопроса) и возвращает структурированный JSON-ответ, как описано в `docs/flowise_templates/vacancy_analysis_prompt.md`.
 
 ### 4.3. Stop Services
 
@@ -109,11 +110,15 @@ pip install -r requirements.txt
 
 Once all services are up and configured, you can run the agent. If running via Docker Compose, the `agent` service will automatically start.
 
-If running directly:
+Если запускаете напрямую:
 
 ```bash
 python -m src.main
 ```
 
-(Note: `src/main.py` will be created in a later step and will be the entry point for the agent.)
+(Примечание: `src/main.py` будет создан на более позднем этапе и станет точкой входа (entry point) для агента.)
+
+### 6.1. Использование FlowiseAPIClient (Using FlowiseAPIClient)
+
+Ваш Python-агент будет использовать `src/flowise_integration/flowise_api_client.py` для взаимодействия с Flowise. Убедитесь, что переменные окружения `FLOWISE_API_URL` и `FLOWISE_API_KEY` корректно установлены в вашем файле `.env`.
 
