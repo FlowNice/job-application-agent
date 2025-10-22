@@ -1,0 +1,159 @@
+# Job Application Agent Configuration
+# Конфигурация агента для автоматического отклика на вакансии
+
+# Настройки парсинга (Parsing Configuration)
+parsing:
+  # Интервал сканирования в минутах (scan interval in minutes)
+  scan_interval: 5
+  
+  # Платформы для мониторинга (Platforms to monitor)
+  platforms:
+    djinni:
+      enabled: true
+      base_url: "https://djinni.co"
+      
+      # Ключевые слова для поиска вакансий разработки (Keywords for development vacancies)
+      keywords:
+        - "Python Developer"
+        - "Python"
+        - "Django"
+        - "FastAPI"
+        - "Backend Developer"
+        - "Full Stack Developer"
+        - "Senior Developer"
+        - "Middle Developer"
+      
+      # Локации (Locations)
+      locations:
+        - "Remote"
+        - "Kyiv"
+        - "Lviv"
+      
+      # Уровни опыта (Experience levels)
+      experience_levels:
+        - "Middle"
+        - "Senior"
+      
+      # Максимальное количество вакансий для парсинга за раз (Max vacancies per scan)
+      max_vacancies_per_scan: 20
+    
+    linkedin:
+      enabled: false  # Отключено из-за ограничений LinkedIn (Disabled due to LinkedIn restrictions)
+      base_url: "https://www.linkedin.com"
+      
+      keywords:
+        - "Software Engineer"
+        - "Backend Developer"
+        - "Python Developer"
+      
+      locations:
+        - "Remote"
+      
+      max_vacancies_per_scan: 10
+
+# Настройки анализа (Analysis Configuration)
+analysis:
+  # Включить NLP-анализ (Enable NLP-based analysis)
+  nlp_enabled: true
+  
+  # Минимальный уровень уверенности для извлеченной информации (Minimum confidence score)
+  min_confidence: 0.7
+
+# Настройки Flowise (Flowise Configuration)
+flowise:
+  enabled: true
+  api_url: "http://localhost:3000/api"
+  api_key: "${FLOWISE_API_KEY}"
+  
+  # ID чатфлоу (Chatflow IDs) для различных задач
+  chatflows:
+    vacancy_analysis: "chatflow_id_1"  # Анализ вакансии (Vacancy analysis)
+    response_generation: "chatflow_id_2"  # Генерация ответа (Response generation)
+
+# Настройки взаимодействия с рекрутерами (Recruiter Interaction Configuration)
+recruiter_interaction:
+  # Контактная информация Максима (Maxim's contact information)
+  maxim_contact:
+    name: "Maxim"
+    email: "maxim@example.com"
+    phone: "+1234567890"
+    slack_id: "U123456789"
+  
+  # Контакт технического специалиста (Technical specialist contact)
+  specialist_contact:
+    name: "Technical Specialist"
+    email: "specialist@example.com"
+    phone: "+1234567890"
+  
+  # Планирование встреч через Calendly (Meeting scheduling with Calendly)
+  calendly:
+    enabled: true
+    url: "https://calendly.com/your-username"
+  
+  # Планирование встреч через Crea (Meeting scheduling with Crea)
+  crea:
+    enabled: false
+    url: "https://crea.app/your-meeting-link"
+
+# Настройки уведомлений (Notification Configuration)
+notifications:
+  # Email уведомления (Email notifications)
+  email:
+    enabled: true
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    sender_email: "${SENDER_EMAIL}"
+    sender_password: "${SENDER_PASSWORD}"
+  
+  # Slack уведомления (Slack notifications)
+  slack:
+    enabled: true
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+  
+  # SMS уведомления (SMS notifications)
+  sms:
+    enabled: false
+    provider: "twilio"
+    account_sid: "${TWILIO_ACCOUNT_SID}"
+    auth_token: "${TWILIO_AUTH_TOKEN}"
+
+# Настройки базы данных (Database Configuration)
+database:
+  type: "sqlite"  # sqlite или postgresql
+  path: "./data/agent.db"  # Путь для SQLite (Path for SQLite)
+  
+  # Для PostgreSQL:
+  # host: "localhost"
+  # port: 5432
+  # name: "job_agent"
+  # user: "agent_user"
+  # password: "${DB_PASSWORD}"
+
+# Настройки логирования (Logging Configuration)
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: "./logs/agent.log"
+  max_size_mb: 10
+  backup_count: 5
+
+# Настройки API (API Configuration for future web interface)
+api:
+  enabled: true
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+
+# Фильтры для вакансий (Vacancy Filters)
+filters:
+  # Исключать вакансии с этими словами (Exclude vacancies with these keywords)
+  exclude_keywords:
+    - "Junior"
+    - "Intern"
+    - "Trainee"
+  
+  # Минимальная зарплата в USD (Minimum salary in USD)
+  min_salary: 2000
+  
+  # Максимальное количество лидов в день (Max leads per day)
+  max_leads_per_day: 10
+
