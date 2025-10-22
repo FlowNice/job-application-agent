@@ -50,11 +50,38 @@ class DjinniParser:
         """
         try:
             logger.info(f"Fetching vacancies from Djinni.co with keywords: {keywords}")
-            vacancies = []
+            search_url = f"{self.base_url}/jobs/"
+            params = {}
+            if keywords:
+                params["q"] = " ".join(keywords)
             
-            # TODO: Implement actual scraping logic
-            # This is a placeholder for the actual implementation
-            # which will depend on Djinni.co's current structure and API availability
+            response = self.session.get(search_url, params=params)
+            response.raise_for_status() # Raise an exception for HTTP errors
+            
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Find job listings - this selector might need adjustment based on Djinni.co's current HTML
+            job_cards = soup.find_all('div', class_='job-list-item') # Common class for job listings
+            
+            vacancies = []
+            for card in job_cards:
+                title_tag = card.find('a', class_='job-list-item__link') # Common class for job title link
+                if title_tag:
+                    title = title_tag.text.strip()
+                    vacancy_url = self.base_url + title_tag['href']
+                    
+                    # Basic extraction, can be expanded later
+                    vacancies.append({
+                        'title': title,
+                        'vacancy_url': vacancy_url,
+                        'company': card.find('div', class_='text-muted').text.strip() if card.find('div', class_='text-muted') else None,
+                        'posted_date': card.find('div', class_='text-date').text.strip() if card.find('div', class_='text-date') else None,
+                        'description': None, # Detailed description requires visiting each page
+                        'parsed_at': datetime.now().isoformat()
+                    })
+                    
+                if len(vacancies) >= limit:
+                    break
             
             logger.info(f"Successfully fetched {len(vacancies)} vacancies")
             return vacancies
@@ -155,6 +182,22 @@ class DjinniParser:
 if __name__ == "__main__":
     # Example usage
     parser = DjinniParser()
-    vacancies = parser.fetch_vacancies(keywords=['Python', 'Django'], limit=10)
-    print(f"Fetched {len(vacancies)} vacancies")
+    print("\n--- Testing DjinniParser --- ")
+    parser = DjinniParser()
+    
+    # Test fetching vacancies
+    print("Fetching 5 Python vacancies...")
+    vacancies = parser.fetch_vacancies(keywords=['Python'], limit=5)
+    if vacancies:
+        print(f"Fetched {len(vacancies)} vacancies:")
+        for i, vacancy in enumerate(vacancies):
+            print(f"  {i+1}. Title: {vacancy.get('title')}, URL: {vacancy.get('vacancy_url')}")
+    else:
+        print("No vacancies fetched or an error occurred.")
+
+    # Test parsing a single vacancy (requires a full HTML, currently a placeholder)
+    # print("\nTesting single vacancy parsing (placeholder)... ")
+    # sample_html = "<html><body>...</body></html>" # Replace with actual HTML for testing
+    # parsed_data = parser.parse_vacancy(sample_html)
+    # print(json.dumps(parsed_data, indent=2))
 
