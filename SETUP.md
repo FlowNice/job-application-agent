@@ -1,13 +1,13 @@
 # Setup Guide for Job Application Agent
 
-This guide provides instructions for setting up the Job Application Agent, including dependencies, Flowise, and API keys.
+Это руководство содержит инструкции по настройке TalentFlow Agent, включая зависимости, AI-платформу для оркестрации LLM и API-ключи.
 
 ## 1. Prerequisites
 
 Before you begin, ensure you have the following installed:
 
 *   **Git**: For cloning the repository.
-*   **Docker & Docker Compose**: For running Flowise and other services (PostgreSQL, Redis).
+*   **Docker & Docker Compose**: Для запуска AI-платформы для оркестрации LLM и других сервисов (PostgreSQL, Redis).
 *   **Python 3.11+**: For running the agent itself.
 *   **pip**: Python package installer.
 
@@ -37,11 +37,11 @@ Create a `.env` file in the root directory of the project to store sensitive inf
 Example `.env` file:
 
 ```dotenv
-# Flowise Configuration
-FLOWISE_API_URL=http://localhost:3000/api
-FLOWISE_API_KEY=your_flowise_api_key_here
-FLOWISE_USERNAME=admin
-FLOWISE_PASSWORD=password
+# Конфигурация AI-платформы
+AI_PLATFORM_API_URL=http://localhost:3000/api
+AI_PLATFORM_API_KEY=your_ai_platform_api_key_here
+AI_PLATFORM_USERNAME=admin
+AI_PLATFORM_PASSWORD=password
 
 # OpenAI API Key (for LLM if not using Flowise directly, or if Flowise uses it)
 OPENAI_API_KEY=your_openai_api_key_here
@@ -65,7 +65,7 @@ DB_PASSWORD=your_db_password_here
 
 ## 4. Running Services with Docker Compose
 
-The project uses Docker Compose to manage its services, including Flowise, PostgreSQL, and Redis.
+Проект использует Docker Compose для управления своими сервисами, включая AI-платформу для оркестрации LLM, PostgreSQL и Redis.
 
 ### 4.1. Start Services
 
@@ -78,19 +78,17 @@ docker-compose up -d
 This will:
 *   Build the `agent` service (your job application agent).
 *   Start a PostgreSQL database for data storage.
-*   Start a Flowise instance for LLM orchestration.
+*   Запускает инстанс AI-платформы для оркестрации LLM.
 *   Start a Redis instance for caching (optional).
 
-### 4.2. Access Flowise UI
+### 4.2. Доступ к пользовательскому интерфейсу AI-платформы
 
-Once Flowise is running (it might take a few minutes to initialize), you can access its UI at `http://localhost:3000`.
+Как только AI-платформа будет запущена (это может занять несколько минут для инициализации), вы сможете получить доступ к ее пользовательскому интерфейсу по адресу `http://localhost:3000`.
 
 *   **Default Credentials**: `username: admin`, `password: password` (or as set in your `.env` file).
-    *   **Создание чатфлоу (Create Chatflows)**: Внутри Flowise вам потребуется создать чатфлоу для `vacancy_analysis` (анализ вакансий) и `response_generation` (генерация ответов), как указано в `config.yaml`.
-        *   После создания чатфлоу, вы найдете его **Chatflow ID** в пользовательском интерфейсе Flowise. Этот ID необходимо будет обновить в вашем файле `config.yaml` или `.env`.
-        *   **Важно**: Убедитесь, что ваш чатфлоу принимает JSON-объект в качестве `question` (вопроса) и возвращает структурированный JSON-ответ, как описано в `docs/flowise_templates/vacancy_analysis_prompt.md`.
-
-### 4.3. Stop Services
+    *   **Создание чатфлоу*   **Создание чатфлоу (Create Chatflows)**: Внутри AI-платформы вам потребуется создать чатфлоу для `vacancy_analysis` (анализ вакансий) и `response_generation` (генерация ответов), как указано в `config.yaml`.
+        *   После создания чатфлоу, вы найдете его **Chatflow ID** в пользовательском интерфейсе AI-платформы. Этот ID необходимо будет обновить в вашем файле `config.yaml` или `.env`.
+        *   **Важно**: Убедитесь, что ваш чатфлоу принимает JSON-объект в качестве `question` (вопроса) и возвращает структурированный JSON-ответ, как описано в `docs/ai_platform_templates/vacancy_analysis_prompt.md`.## 4.3. Stop Services
 
 To stop all services, run:
 
@@ -118,7 +116,7 @@ python -m src.main
 
 (Примечание: `src/main.py` будет создан на более позднем этапе и станет точкой входа (entry point) для агента.)
 
-### 6.1. Использование FlowiseAPIClient (Using FlowiseAPIClient)
+### 6.1. Использование клиента AI-платформы (Using AI Platform Client)
 
-Ваш Python-агент будет использовать `src/flowise_integration/flowise_api_client.py` для взаимодействия с Flowise. Убедитесь, что переменные окружения `FLOWISE_API_URL` и `FLOWISE_API_KEY` корректно установлены в вашем файле `.env`.
+Ваш Python-агент будет использовать `src/flowise_integration/ai_platform_api_client.py` для взаимодействия с AI-платформой. Убедитесь, что переменные окружения `AI_PLATFORM_API_URL` и `AI_PLATFORM_API_KEY` корректно установлены в вашем файле `.env`.
 

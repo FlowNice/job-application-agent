@@ -6,15 +6,15 @@
 
 ---
 
-## Фаза 1: Интеграция с Flowise и API (Weeks 1-2)
+## Фаза 1: Интеграция с AI-платформой и API (Weeks 1-2)
 
 ### Цель (Goal)
-Установить надежное взаимодействие между Python-агентом и Flowise, подготовить базовые чатфлоу для анализа вакансий и генерации ответов.
+Установить надежное взаимодействие между Python-аагентом и нашей AI-платформой, подготовить базовые чатфлоу для анализа вакансий и генерации ответов.
 
 ### День 11 (Done) ✅
-**Тема**: Детализация API-интеграций для Flowise (Flowise API Integration Details)
-- ✅ Создан `src/flowise_integration/flowise_api_client.py` с методами для вызова чатфлоу (invoke chatflow).
-- ✅ Обновлен `SETUP.md` с инструкциями по настройке Flowise и использованию FlowiseAPIClient.
+**Тема**: Детализация API-интеграций для AI-платформы (AI Platform API Integration Details)
+- ✅ Создан `src/ai_platform_integration/ai_platform_api_client.py` с методами для вызова чатфлоу (invoke chatflow).
+- ✅ Обновлен `SETUP.md` с инструкциями по настройке AI-платформы и использованию AIPlatformAPIClient.
 - ✅ Добавлены примеры использования в `flowise_api_client.py`.
 
 ### День 12 (Planned)
@@ -30,31 +30,31 @@
 - GitHub: Закоммитить обновленный парсер с комментарием "Day 13: Integrate LinkedIn parser with JobSpy library".
 
 ### День 14 (Planned)
-**Тема**: Создание базовых чатфлоу в Flowise (Basic Flowise Chatflows Creation)
-- Задача: Разработать в Flowise два основных чатфлоу: для анализа вакансий и для генерации ответов.
+**Тема**: Создание базовых чатфлоу на AI-платформе (Basic AI Platform Chatflows Creation)
+- Задача: Разработать на нашей AI-платформе два основных чатфлоу: для анализа вакансий и для генерации ответов.
 - Действие: 
   - Создать чатфлоу `vacancy_analysis` с нодами для извлечения KPI, технологий и ключевых требований.
   - Создать чатфлоу `response_generation` для создания персонализированного отклика на вакансию.
   - Документировать ID этих чатфлоу в `config.yaml`.
-- GitHub: Создать файл `docs/flowise_setup_guide.md` с пошаговыми инструкциями по созданию чатфлоу.
+- GitHub: Создать файл `docs/ai_platform_setup_guide.md` с пошаговыми инструкциями по созданию чатфлоу.
 
 ### День 15 (Planned)
-**Тема**: Интеграция парсеров с FlowiseAPIClient (Parsers & Flowise Integration)
-- Задача: Соединить парсеры с Flowise API для автоматического анализа вакансий.
+**Тема**: Интеграция парсеров с AIPlatformAPIClient (Parsers & AI Platform Integration)
+- Задача: Соединить парсеры с AI-платформой для автоматического анализа вакансий.
 - Действие: 
-  - Обновить `src/analyzer/vacancy_analyzer.py` для использования FlowiseAPIClient.
+  - Обновить `src/analyzer/vacancy_analyzer.py` для использования AIPlatformAPIClient.
   - Создать функцию `analyze_and_generate_response()` в `src/analyzer/vacancy_analyzer.py`, которая:
     1. Парсит вакансию с помощью парсера.
-    2. Отправляет данные в Flowise для анализа.
+    2. Отправляет данные в AI-платформу для анализа.
     3. Получает результат анализа.
-    4. Отправляет результат в Flowise для генерации ответа.
-- GitHub: Закоммитить обновленный анализатор с комментарием "Day 15: Integrate parsers with Flowise for vacancy analysis and response generation".
+    4. Отправляет результат в AI-платформу для генерации ответа.
+- GitHub: Закоммитить обновленный анализатор с комментарием "Day 15: Integrate parsers with AI Platform for vacancy analysis and response generation".
 
 ### День 16 (Planned)
 **Тема**: Обработка ошибок и логирование в интеграциях (Error Handling & Logging in Integrations)
 - Задача: Добавить надежную обработку ошибок и логирование для всех интеграций.
 - Действие: 
-  - Обновить `src/flowise_integration/flowise_api_client.py` с расширенной обработкой ошибок (retry logic, exponential backoff).
+  - Обновить `src/ai_platform_integration/ai_platform_api_client.py` с расширенной обработкой ошибок (retry logic, exponential backoff).
   - Использовать `src/utils/logger.py` для логирования всех операций.
   - Добавить обработку ошибок в парсеры и анализатор.
 - GitHub: Закоммитить обновления с комментарием "Day 16: Add comprehensive error handling and logging to integrations".
@@ -149,7 +149,7 @@
 - Задача: Добавить возможность для агента учиться на результатах взаимодействия.
 - Действие: 
   - Создать систему для сбора feedback от Максима о качестве лидов.
-  - Реализовать A/B тестирование различных промптов в Flowise.
+  - Реализовать A/B тестирование различных промптов на нашей AI-платформе.
   - Добавить механизм для автоматического обновления промптов на основе результатов.
 - GitHub: Закоммитить механизмы обучения с комментарием "Day 24: Implement self-learning mechanisms and A/B testing for prompts".
 
@@ -213,7 +213,7 @@
 ## Метрики успеха (Success Metrics)
 
 - ✅ Агент успешно парсит вакансии с Djinni.co и LinkedIn.
-- ✅ Flowise анализирует вакансии и генерирует персонализированные ответы.
+- ✅ AI-платформа анализирует вакансии и генерирует персонализированные ответы.
 - ✅ Ответы отправляются рекрутерам через платформы.
 - ✅ Встречи планируются через Calendly.
 - ✅ Максим получает уведомления о новых лидах.
