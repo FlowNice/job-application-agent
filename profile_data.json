@@ -1,0 +1,11 @@
+{
+    "profile_name": "MLOps/Deployment Specialist",
+    "target_role": "MLOps Engineer / Cloud Architect",
+    "resume_summary": "Expert in deploying, monitoring, and maintaining large-scale Machine Learning models in cloud environments (AWS, GCP). Focus on CI/CD, infrastructure as code (Terraform), and ensuring model performance and reliability in production.",
+    "keywords_focus": ["MLOps", "AWS", "GCP", "Kubernetes", "Terraform", "CI/CD", "Monitoring"],
+    "target_companies": "Companies with mature ML models needing scalability, Cloud Service Providers.",
+    "portfolio_focus": [
+        {"title": "Automated Model Retraining and Deployment Pipeline on AWS SageMaker", "metrics": "Reduced model drift incidents by 40%, achieved 99.99% model uptime."},
+        {"title": "Cross-Cloud ML Infrastructure with Terraform and Kubernetes", "metrics": "Enabled multi-region deployment in under 5 minutes, saved 25% on cloud computing costs."}
+    ]
+}
