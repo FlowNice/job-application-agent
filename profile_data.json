@@ -1,0 +1,11 @@
+{
+    "profile_name": "Full-Stack AI/ML Consultant",
+    "target_role": "AI/ML Consultant / Full-Stack Data Scientist",
+    "resume_summary": "Versatile professional capable of handling the entire ML lifecycle from data collection to front-end integration. Focus on rapid prototyping, delivering measurable business impact, and communicating technical solutions to non-technical stakeholders.",
+    "keywords_focus": ["Full-Stack", "Rapid Prototyping", "Business Impact", "Python", "Streamlit", "Data Science"],
+    "target_companies": "Small/Medium Businesses, Consulting Agencies, Early-Stage Startups.",
+    "portfolio_focus": [
+        {"title": "Customer Churn Prediction Dashboard (Full-Stack)", "metrics": "Identified 15% of high-risk customers, resulting in $50k in saved revenue in Q1."},
+        {"title": "Automated Document Classification System for Legal Firm", "metrics": "Reduced manual processing time by 80%, achieving 95% classification accuracy."}
+    ]
+}
