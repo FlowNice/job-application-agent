@@ -1,0 +1,11 @@
+{
+    "profile_name": "Research-Focused ML Scientist",
+    "target_role": "Applied Scientist / ML Researcher",
+    "resume_summary": "PhD in Computer Science with a strong background in statistical modeling, deep learning, and published research. Expertise in developing novel algorithms for NLP/Computer Vision and translating research into practical applications.",
+    "keywords_focus": ["Deep Learning", "NLP", "Computer Vision", "Statistical Modeling", "Research", "Publications"],
+    "target_companies": "Research Labs, DeepTech Startups, Academic Institutions.",
+    "portfolio_focus": [
+        {"title": "Novel Attention Mechanism for Transformer Models", "metrics": "Achieved SOTA on X dataset, reduced inference time by 30%."},
+        {"title": "Unsupervised Anomaly Detection in Time-Series Data", "metrics": "Improved F1-score by 15% compared to baseline, deployed in a financial service."}
+    ]
+}
