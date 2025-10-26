@@ -1,192 +1,155 @@
-# Job Application Agent - Architecture Diagram
+# TalentFlow Agent - Architecture Diagram
 
 ## System Architecture Overview
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Job Platforms"
         Djinni["Djinni.co"]
         LinkedIn["LinkedIn"]
     end
     
     subgraph "Parsing Layer"
+        ParsingScheduler["Parsing Scheduler<br/>5-min intervals"]
         DjinniParser["Djinni Parser"]
         LinkedInParser["LinkedIn Parser"]
-        ParsingScheduler["Parsing Scheduler<br/>5-min intervals"]
     end
     
-    subgraph "Analysis & Processing"
+    subgraph "Core Agent Services"
         VacancyAnalyzer["Vacancy Analyzer<br/>NLP-based"]
-        FloWise["Flowise<br/>LLM Orchestration"]
+        AIPlatform["AI Platform<br/>LLM Orchestration"]
+        VectorDB["Vector DB<br/>(Supabase/Pinecone)"]
+        CacheManager["Cache Manager<br/>(Redis/Kafka)"]
+        LeadManager["Lead Manager<br/>(CRM-like)"]
+        
+        VacancyDB["Vacancy DB<br/>(PostgreSQL)"]
+        
+        AIPlatform --> VectorDB
+        AIPlatform --> CacheManager
+    end
+    
+    subgraph "Lead Generation & Interaction"
         ResponseGenerator["Response Generator<br/>Personalized Proposals"]
-    end
-    
-    subgraph "Lead Management"
-        LeadGenerator["Lead Generator"]
-        LeadDB["Lead Database"]
-        StatusTracker["Status Tracker"]
-    end
-    
-    subgraph "Recruiter Interaction"
         ResponseSender["Response Sender"]
         MeetingScheduler["Meeting Scheduler<br/>Calendly/Crea"]
         NotificationService["Notification Service"]
     end
     
-    subgraph "Notification Channels"
-        MaximEmail["Email to Maxim"]
-        MaximSlack["Slack Notification"]
-        MaximSMS["SMS Notification"]
+    subgraph "Profiles & Configuration"
+        ProfileData["4 Target Profiles<br/>(A/B Testing)"]
+        Config["Configuration (YAML)"]
     end
     
     subgraph "External Services"
         Calendly["Calendly API"]
-        Crea["Crea API"]
         OpenAI["OpenAI/LLM API"]
+        Slack["Slack API"]
     end
     
-    subgraph "Storage"
-        VacancyDB["Vacancy Database"]
-        ConfigDB["Configuration DB"]
-        LogsStorage["Logs & Metrics"]
-    end
-    
-    %% Parsing connections
-    Djinni --> DjinniParser
-    LinkedIn --> LinkedInParser
+    %% Connections
     ParsingScheduler --> DjinniParser
     ParsingScheduler --> LinkedInParser
-    
-    %% Data flow
     DjinniParser --> VacancyDB
     LinkedInParser --> VacancyDB
     
     VacancyDB --> VacancyAnalyzer
-    VacancyAnalyzer --> FloWise
-    FloWise --> OpenAI
-    FloWise --> ResponseGenerator
+    ProfileData --> VacancyAnalyzer
     
-    ResponseGenerator --> LeadGenerator
-    LeadGenerator --> LeadDB
-    LeadDB --> StatusTracker
+    VacancyAnalyzer --> AIPlatform
+    AIPlatform --> OpenAI
     
-    %% Recruiter interaction
-    LeadGenerator --> ResponseSender
-    ResponseSender --> Djinni
-    ResponseSender --> LinkedIn
+    AIPlatform --> ResponseGenerator
     
-    LeadGenerator --> MeetingScheduler
+    ResponseGenerator --> ResponseSender
+    ResponseSender --> LeadManager
+    LeadManager --> NotificationService
+    LeadManager --> MeetingScheduler
+    
     MeetingScheduler --> Calendly
-    MeetingScheduler --> Crea
     
-    %% Notifications
-    LeadGenerator --> NotificationService
-    NotificationService --> MaximEmail
-    NotificationService --> MaximSlack
-    NotificationService --> MaximSMS
+    NotificationService --> Slack
     
-    %% Logging
-    VacancyAnalyzer --> LogsStorage
-    LeadGenerator --> LogsStorage
-    ResponseSender --> LogsStorage
+    CacheManager --> VacancyAnalyzer
+    CacheManager --> AIPlatform
     
-    style Djinni fill:#e1f5ff
-    style LinkedIn fill:#e1f5ff
-    style FloWise fill:#fff3e0
-    style OpenAI fill:#fff3e0
-    style Calendly fill:#f3e5f5
-    style Crea fill:#f3e5f5
+    style AIPlatform fill:#fff3e0
+    style VectorDB fill:#e6ee9c
+    style CacheManager fill:#ffcc80
+    style ProfileData fill:#bbdefb
+    
+    %% Data Flow
+    VacancyAnalyzer --> VectorDB
+    VectorDB --> VacancyAnalyzer
+    
+    %% Orchestration Flow
+    LeadManager --> LeadManager
+    
 ```
 
-## Data Flow Sequence
+## Data Flow Sequence (Lead Processing)
 
 ```mermaid
 sequenceDiagram
     participant Scheduler as Parsing Scheduler
     participant Parser as Job Parser
+    participant VacancyDB as Vacancy DB
     participant Analyzer as Vacancy Analyzer
-    participant Flowise as Flowise/LLM
-    participant LeadGen as Lead Generator
+    participant VectorDB as Vector DB
+    participant AIPlatform as AI Platform
+    participant LeadManager as Lead Manager
+    participant Sender as Response Sender
     participant Recruiter as Recruiter Platform
-    participant Maxim as Maxim (Notification)
     
     Scheduler->>Parser: Fetch new vacancies
-    Parser->>Parser: Extract job details
-    Parser->>Analyzer: Send vacancy data
+    Parser->>VacancyDB: Save new vacancies
     
-    Analyzer->>Analyzer: Extract requirements & KPIs
-    Analyzer->>Flowise: Analyze vacancy & generate response
-    Flowise->>Flowise: Process with LLM
-    Flowise->>Analyzer: Return generated response
+    loop New Vacancies
+        Analyzer->>VacancyDB: Get new vacancy
+        Analyzer->>VectorDB: Find top 2 relevant portfolio projects (RAG)
+        Analyzer->>AIPlatform: Send Vacancy + Profile Data + Projects (Prompt)
+        
+        AIPlatform->>AIPlatform: Analyze & Generate Response (LLM Chain)
+        
+        AIPlatform->>Analyzer: Return Response & Analysis
+        
+        LeadManager->>LeadManager: Create Lead Record
+        LeadManager->>Sender: Send Response
+        Sender->>Recruiter: Send Personalized Proposal
+        
+        LeadManager->>LeadManager: Update Status: Sent
+    end
     
-    Analyzer->>LeadGen: Create lead record
-    LeadGen->>LeadGen: Prepare recruiter message
-    LeadGen->>Recruiter: Send response + meeting link
-    
-    LeadGen->>Maxim: Notify about new lead
-    Maxim->>Recruiter: Follow up (manual)
-    Recruiter->>Maxim: Respond to proposal
-    
-    Maxim->>LeadGen: Update lead status
-    LeadGen->>LeadGen: Track interaction
+    Recruiter->>LeadManager: Recruiter Reply/Meeting Request
+    LeadManager->>LeadManager: Update Status: Engaged
+    LeadManager->>Maxim: Notify Maxim (Lead Handoff)
 ```
 
 ## Component Details
 
-### 1. Parsing Layer
-- **Djinni Parser**: Scrapes vacancies from Djinni.co using BeautifulSoup/Selenium
-- **LinkedIn Parser**: Integrates with LinkedIn API or uses authorized scraping
-- **Parsing Scheduler**: Runs every 5 minutes to check for new vacancies
+### 1. Core Agent Services
 
-### 2. Analysis & Processing
-- **Vacancy Analyzer**: Uses NLP to extract requirements, responsibilities, and KPIs
-- **Flowise**: Visual LLM orchestration platform for creating intelligent chains
-- **Response Generator**: Creates personalized proposals based on analysis
+- **Vacancy Analyzer**: Uses NLP to extract requirements, responsibilities, and KPIs. **Now uses VectorDB for RAG.**
+- **AI Platform (Orchestration)**: Central platform for creating and managing LLM chains (chatflows). **Replaces explicit mention of Flowise.**
+- **Vector DB (Supabase/Pinecone)**: Stores vectorized portfolio projects and vacancy data for **Retrieval-Augmented Generation (RAG)**.
+- **Cache Manager (Redis/Kafka)**: Caches expensive LLM responses and parsing results to reduce costs and latency.
+- **Lead Manager (CRM-like)**: Creates, tracks, and manages the status of all leads and interaction history.
 
-### 3. Lead Management
-- **Lead Generator**: Creates and manages lead records
-- **Lead Database**: Stores all lead information and history
-- **Status Tracker**: Monitors lead progression through the pipeline
+### 2. Profiles & Configuration
 
-### 4. Recruiter Interaction
-- **Response Sender**: Sends generated responses to recruiters
-- **Meeting Scheduler**: Integrates with Calendly/Crea for automatic scheduling
-- **Notification Service**: Alerts Maxim about new leads via multiple channels
+- **4 Target Profiles**: Separate Git branches (`profile-swe-focused`, etc.) with unique `profile_data.json` for A/B testing and precise targeting.
+- **Configuration (YAML)**: Centralized configuration for all API keys, search parameters, and chatflow IDs.
 
-### 5. Storage & Logging
-- **Vacancy Database**: Stores parsed job vacancies
-- **Configuration Database**: Manages agent settings and preferences
-- **Logs & Metrics**: Tracks all actions for monitoring and optimization
+### 3. Lead Generation & Interaction
 
-## Integration Points
+- **Response Generator**: Creates highly personalized proposals by integrating analysis from the AI Platform and relevant portfolio projects from the Vector DB.
+- **Response Sender**: Handles the technical sending of the personalized response to the job platform.
+- **Meeting Scheduler**: Integrates with Calendly API for automated scheduling of the "hand-off" call with Maxim.
+- **Notification Service**: Alerts Maxim via Slack/Email upon lead generation or recruiter engagement.
 
-### External APIs
-- **OpenAI API**: For LLM-based analysis and response generation
-- **Calendly API**: For meeting scheduling
-- **Crea API**: Alternative meeting scheduling platform
-- **Slack API**: For notifications to Maxim
-- **Email Service**: SMTP for email notifications
+### 4. Scalability & Optimization
 
-### Flowise Integration
-Flowise serves as the central orchestration platform for:
-- Creating reusable LLM chains for vacancy analysis
-- Building self-learning agents that improve over time
-- Managing complex workflows with multiple AI steps
-- Providing a visual interface for non-technical configuration
-
-## Scalability Considerations
-
-1. **Horizontal Scaling**: Multiple parser instances can run in parallel
-2. **Caching**: Redis can cache frequently accessed data
-3. **Database Optimization**: PostgreSQL for production deployment
-4. **Async Processing**: Use APScheduler for non-blocking operations
-5. **Load Balancing**: FastAPI with multiple workers for API endpoints
-
-## Security Considerations
-
-1. **API Keys**: Stored in environment variables, not in code
-2. **Database**: Encrypted connections with PostgreSQL
-3. **Authentication**: Flowise authentication for API access
-4. **Rate Limiting**: Respect platform rate limits and robots.txt
-5. **Data Privacy**: Secure storage of recruiter contact information
+- **RAG (Retrieval-Augmented Generation)**: Implemented via Vector DB to ensure responses are grounded in the user's actual portfolio data.
+- **Caching**: Reduces reliance on external APIs and speeds up the process.
+- **A/B Testing**: Enabled by the 4 distinct Git branches/profiles.
+- **Future: Message Brokers (Kafka/RabbitMQ)**: Planned for high-volume scaling.
 
