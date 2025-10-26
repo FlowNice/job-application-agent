@@ -1,0 +1,11 @@
+{
+    "profile_name": "SWE-Focused ML Engineer",
+    "target_role": "Senior ML Engineer / MLOps Specialist",
+    "resume_summary": "Highly skilled Software Engineer with a strong background in Computer Science, specializing in building robust, scalable, and production-ready ML systems. Expertise in Python, Go, Docker, Kubernetes, and CI/CD for MLOps.",
+    "keywords_focus": ["Python", "Go", "MLOps", "Kubernetes", "Scalability", "Production"],
+    "target_companies": "Large Tech Companies, FinTech, Companies with mature engineering culture.",
+    "portfolio_focus": [
+        {"title": "High-Throughput Real-Time Recommendation System", "metrics": "Latency < 50ms, 99.9% uptime, 20% increase in user engagement."},
+        {"title": "Automated ML Model Deployment Pipeline", "metrics": "Reduced deployment time from 3 hours to 15 minutes, zero downtime deployments."}
+    ]
+}
